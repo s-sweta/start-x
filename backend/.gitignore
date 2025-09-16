@@ -1,5 +1,5 @@
 # Node.js dependencies
-node_modules/
+node_modules
 
 # Environment variables
 .env
@@ -14,3 +14,4 @@ node_modules/
 # OS system files
 .DS_Store
 Thumbs.db
+
