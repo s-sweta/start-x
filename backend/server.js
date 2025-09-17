@@ -10,6 +10,7 @@ dotenv.config();
 const authRoutes = require('./routes/authRoutes');
 const storeRoutes = require('./routes/storeRoutes');
 const productRoutes = require('./routes/productRoutes');
+const strategyRoutes = require('./routes/strategyRoutes');
 
 // Connect to database
 DBConnection();
@@ -24,6 +25,7 @@ app.use(express.json()); // Body parser for JSON
 app.use('/api/auth', authRoutes);
 app.use('/api/stores', storeRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/strategies', strategyRoutes);
 
 const PORT = process.env.PORT || 8000;
 

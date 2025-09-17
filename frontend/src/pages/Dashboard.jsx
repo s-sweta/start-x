@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import StrategyForm from '../components/StrategyForm';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -19,6 +20,10 @@ const Dashboard = () => {
     const [productCategory, setProductCategory] = useState('');
     const [productCost, setProductCost] = useState('');
 
+    const [strategies, setStrategies] = useState([]);
+    const [isFormVisible, setIsFormVisible] = useState(false);
+    const [editingStrategy, setEditingStrategy] = useState(null);
+
     // --- NEW: State to toggle the add product form's visibility ---
     const [showProductForm, setShowProductForm] = useState(false);
     
@@ -30,8 +35,12 @@ const Dashboard = () => {
                 const storeRes = await api.get('/stores/my-store');
                 if (storeRes.data.success && storeRes.data.data) {
                     setStore(storeRes.data.data);
-                    const productsRes = await api.get('/products');
+                    const [productsRes, strategiesRes] = await Promise.all([
+                        api.get('/products'),
+                        api.get('/strategies')
+                    ]);
                     setProducts(productsRes.data.data);
+                    setStrategies(strategiesRes.data.data);
                 }
             } catch (error) {
                 if (error.response && error.response.status !== 404) {
@@ -43,6 +52,59 @@ const Dashboard = () => {
         };
         fetchData();
     }, []);
+
+    const handleSaveStrategy = async (strategyData) => {
+        try {
+            if (editingStrategy) {
+                // Update existing strategy
+                const res = await api.put(`/strategies/${editingStrategy._id}`, strategyData);
+                setStrategies(strategies.map(s => s._id === editingStrategy._id ? res.data.data : s));
+                setMessage('Strategy updated successfully!');
+            } else {
+                // Create new strategy
+                const res = await api.post('/strategies', strategyData);
+                setStrategies([...strategies, res.data.data]);
+                setMessage('Strategy created successfully!');
+            }
+        } catch (error) {
+            setMessage(error.response?.data?.message || 'Failed to save strategy.');
+        } finally {
+            setIsFormVisible(false);
+            setEditingStrategy(null);
+        }
+    };
+
+    const handleDeleteStrategy = async (strategyId) => {
+        if (window.confirm('Are you sure you want to delete this strategy?')) {
+            try {
+                await api.delete(`/strategies/${strategyId}`);
+                setStrategies(strategies.filter(s => s._id !== strategyId));
+                setMessage('Strategy deleted successfully!');
+            } catch (error) {
+                setMessage(error.response?.data?.message || 'Failed to delete strategy.');
+            }
+        }
+    };
+    
+    const handleToggleActive = async (strategy) => {
+        try {
+            const updatedStrategy = { ...strategy, isActive: !strategy.isActive };
+            const res = await api.put(`/strategies/${strategy._id}`, { isActive: updatedStrategy.isActive });
+            setStrategies(strategies.map(s => s._id === strategy._id ? res.data.data : s));
+        } catch (error) {
+            setMessage(error.response?.data?.message || 'Failed to toggle strategy.');
+        }
+    };
+
+    const handleEditClick = (strategy) => {
+        setEditingStrategy(strategy);
+        setIsFormVisible(true);
+    };
+
+    const handleAddNewClick = () => {
+        setEditingStrategy(null);
+        setIsFormVisible(true);
+    };
 
     const handleCreateStore = async (e) => {
         e.preventDefault();
@@ -180,6 +242,47 @@ const Dashboard = () => {
                             <p>You haven't added any products yet.</p>
                         )}
                     </div>
+
+                    <div className="strategy-section">
+                        <div className="strategy-header">
+                            <h3>Strategy Library</h3>
+                            {!isFormVisible && (
+                                <button onClick={handleAddNewClick} className="add-strategy-btn">+ Add New Strategy</button>
+                            )}
+                        </div>
+
+                        {isFormVisible && (
+                            <StrategyForm
+                                onSave={handleSaveStrategy}
+                                existingStrategy={editingStrategy}
+                                onCancel={() => { setIsFormVisible(false); setEditingStrategy(null); }}
+                            />
+                        )}
+
+                        <div className="strategy-list">
+                            {strategies.length > 0 ? strategies.map(s => (
+                                <div key={s._id} className="strategy-card">
+                                    <div className="strategy-card-header">
+                                        <h4>{s.name}</h4>
+                                        <div className="toggle-switch">
+                                            <label>
+                                                <input type="checkbox" checked={s.isActive} onChange={() => handleToggleActive(s)} />
+                                                <span className="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <p className="strategy-type">{s.type.replace('_', ' ')}</p>
+                                    <div className="strategy-card-actions">
+                                        <button onClick={() => handleEditClick(s)} className="btn-edit">Edit</button>
+                                        <button onClick={() => handleDeleteStrategy(s._id)} className="btn-delete">Delete</button>
+                                    </div>
+                                </div>
+                            )) : (
+                                !isFormVisible && <p>You haven't created any strategies yet. Click 'Add New Strategy' to begin.</p>
+                            )}
+                        </div>
+                    </div>
+
                 </>
             )}
         </div>

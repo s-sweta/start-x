@@ -14,7 +14,7 @@ exports.register = async (req, res) => {
 
         const user = await User.create({ email, password });
 
-        // ✅ --- CHANGE IS HERE --- ✅
+        
         // If user is created successfully, create a token for them
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: '1h'
@@ -25,7 +25,7 @@ exports.register = async (req, res) => {
             message: 'User registered successfully',
             token: token
         });
-        // ✅ --- END OF CHANGE --- ✅
+        
 
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
