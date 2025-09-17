@@ -6,15 +6,30 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide an email'],
         unique: true,
-        match: [/.+\@.+\..+/, 'Please fill a valid email address']
+        match: [/.+\@.+\..+/, 'Please provide a valid email address']
     },
     password: {
         type: String,
         required: [true, 'Please provide a password'],
-        minlength: 6,
+        minlength: [6, 'Password must be at least 6 characters long'],
+        validate: {
+            validator: function(password) {
+                // Check for uppercase, lowercase, number, and special character
+                return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])/.test(password);
+            },
+            message: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+        },
+        select: false
+    },
+    resetPasswordToken: {
+        type: String,
+        select: false
+    },
+    resetPasswordExpire: {
+        type: Date,
         select: false
     }
-});
+}, { timestamps: true });
 
 
 UserSchema.pre('save', async function(next) {
