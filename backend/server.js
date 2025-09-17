@@ -8,6 +8,8 @@ dotenv.config();
 
 // Route files
 const authRoutes = require('./routes/authRoutes');
+const storeRoutes = require('./routes/storeRoutes');
+const productRoutes = require('./routes/productRoutes');
 
 // Connect to database
 DBConnection();
@@ -20,6 +22,8 @@ app.use(express.json()); // Body parser for JSON
 
 // Mount routers
 app.use('/api/auth', authRoutes);
+app.use('/api/stores', storeRoutes);
+app.use('/api/products', productRoutes);
 
 const PORT = process.env.PORT || 8000;
 

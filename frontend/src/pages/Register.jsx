@@ -13,13 +13,11 @@ const Register = () => {
         try {
             const res = await axios.post('http://localhost:8000/api/auth/register', { email, password });
             
-            // ✅ --- CHANGE IS HERE --- ✅
-            // Store the token from the registration response
+            
             localStorage.setItem('token', res.data.token);
             
-            // Redirect directly to the dashboard
             navigate('/dashboard');
-            // ✅ --- END OF CHANGE --- ✅
+            
 
         } catch (error) {
             setMessage(error.response.data.message || 'Something went wrong');
