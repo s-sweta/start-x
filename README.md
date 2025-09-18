@@ -146,9 +146,8 @@ Start-x/
 5. **Configure environment variables**
    Add the following to your `.env` file:
    ```
-   MONGO_URL=mongodb+srv://swetasingh84478_db_user:o1HlCopFO06cyvpS@cluster0.tyh5qmj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-   JWT_SECRET=Ecom_project_start-X_by_sweta_swarnima_swati_shreya
-   PORT=8000
+   MONGO_URL=enter your mongo URL
+   JWT_SECRET=your jwt secret token
    ```
 
 6. **Start the backend server**
@@ -448,5 +447,6 @@ This project is licensed under the MIT License. See the LICENSE file for details
 For questions, issues, or contributions, please contact the development team or create an issue in the project repository.
 
 ---
+
 
 **Start-x** - Empowering businesses with data-driven strategy simulation and testing capabilities.
