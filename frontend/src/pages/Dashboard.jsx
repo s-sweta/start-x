@@ -30,6 +30,7 @@ const Dashboard = () => {
 
     // Customer simulation state
     const [customers, setCustomers] = useState([]);
+    const [customerCountToGenerate, setCustomerCountToGenerate] = useState(20);
     const [customerAnalytics, setCustomerAnalytics] = useState(null);
     const [showCustomerSection, setShowCustomerSection] = useState(false);
 
@@ -175,12 +176,18 @@ const Dashboard = () => {
     };
 
     const handleGenerateCustomers = async () => {
+        const count = parseInt(customerCountToGenerate, 10);
+        if (!count || count <= 0) {
+            setMessage('Please enter a valid number of customers to generate.');
+            return;
+        }
+
         try {
-            const res = await api.post('/customers/generate', { count: 20 });
+            const res = await api.post('/customers/generate', { count });
             setCustomers(res.data.data);
             const analyticsRes = await api.get('/customers/analytics');
             setCustomerAnalytics(analyticsRes.data.data);
-            setMessage('Generated 20 customers successfully!');
+            setMessage(`Generated ${count} customers successfully!`);
         } catch (error) {
             setMessage(error.response?.data?.message || 'Failed to generate customers.');
         }
@@ -363,9 +370,22 @@ const Dashboard = () => {
                         <div className="section-header">
                             <h3>Customer Simulation</h3>
                             <div className="customer-actions">
+                                <label className="generate-count-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span>Count:</span>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={customerCountToGenerate}
+                                        onChange={(e) => setCustomerCountToGenerate(e.target.value)}
+                                        className="generate-count-input"
+                                        style={{ width: '80px' }}
+                                    />
+                                </label>
+
                                 <button onClick={handleGenerateCustomers} className="generate-customers-btn">
                                     🎲 Generate Customers
                                 </button>
+
                                 <button
                                     onClick={() => setShowCustomerSection(!showCustomerSection)}
                                     className="toggle-customers-btn"
