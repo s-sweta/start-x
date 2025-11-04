@@ -8,9 +8,10 @@ const DBConnection = async () => {
         await mongoose.connect(MONGO_URI, {
             serverSelectionTimeoutMS: 5000
         });
-        console.log("DB Connection established");
+        console.log("✅ DB Connection established");
     } catch (error) {
-        console.log("Error while connecting to Mongo", error);
+        console.log("❌ Error while connecting to Mongo:", error.message);
+        throw error; // Re-throw to prevent server from starting with no DB
     }
 };
 
