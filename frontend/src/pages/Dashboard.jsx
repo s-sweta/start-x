@@ -278,8 +278,8 @@ const Dashboard = () => {
                                 <h4>Add a New Product</h4>
                                 <form onSubmit={handleAddProduct} className="dashboard-form">
                                     <input type="text" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Product Name" required />
-                                    <input type="number" step="0.01" value={productPrice} onChange={(e) => setProductPrice(e.target.value)} placeholder="Selling Price" required />
-                                    <input type="number" step="0.01" value={productCost} onChange={(e) => setProductCost(e.target.value)} placeholder="Cost Price" required />
+                                    <input type="number" step="0.01" value={productPrice} onChange={(e) => setProductPrice(Number(e.target.value))} placeholder="Selling Price" required />
+                                    <input type="number" step="0.01" value={productCost} onChange={(e) => setProductCost(Number(e.target.value))} placeholder="Cost Price" required />
                                     <input type="text" value={productCategory} onChange={(e) => setProductCategory(e.target.value)} placeholder="Category" required />
                                     <button type="submit">Add Product</button>
                                 </form>
