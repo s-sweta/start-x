@@ -5,7 +5,7 @@ const Strategy = require('../models/Strategy');
 const Store = require('../models/Store');
 
 // Simulate customer behavior based on persona and active strategies
-const simulateCustomerBehavior = (customer, products, activeStrategies) => {
+const simulateCustomerBehavior = async(customer, products, activeStrategies) => {
     const behavior = {
         willBuy: false,
         selectedProducts: [],
@@ -28,6 +28,25 @@ const simulateCustomerBehavior = (customer, products, activeStrategies) => {
     }
 
     console.log(`🎯 DEBUG - ${customer.name} (${customer.persona}): base probability ${purchaseProbability.toFixed(2)}`);
+    const weights = {
+    base: -1.0,
+    priceConsciousness: 0.015,
+    loyaltyTendency: 0.012,
+    mobilePref: 0.01,
+    personaBias: {
+        IMPULSE_BUYER: 0.8,
+        LOYALTY_DRIVEN: 0.6,
+        MOBILE_FIRST: 0.4,
+        PRICE_SENSITIVE: 0.3
+    }
+};
+
+let score =
+    weights.base +
+    weights.priceConsciousness * customer.priceConsciousness +
+    weights.loyaltyTendency * customer.loyaltyTendency +
+    weights.mobilePref * customer.mobilePref +
+    weights.personaBias[customer.persona];
 
     // Apply strategy effects
     activeStrategies.forEach(strategy => {
@@ -78,7 +97,9 @@ const simulateCustomerBehavior = (customer, products, activeStrategies) => {
     purchaseProbability = Math.min(0.95, purchaseProbability);
 
     // Determine if customer will buy
-    behavior.willBuy = Math.random() < purchaseProbability;
+    const { predictPurchase } = require('../mlPredict');
+const predictedProbability = await predictPurchase(customer, activeStrategies);
+behavior.willBuy = Math.random() < (0.5 * purchaseProbability + 0.5 * predictedProbability);
 
     if (behavior.willBuy) {
         // Select products based on customer preferences
@@ -222,6 +243,25 @@ exports.simulateTransactions = async (req, res) => {
 
                         transactions.push(transaction);
                         console.log(`💳 DEBUG - Transaction created: $${finalAmount.toFixed(2)} (${paymentStatus})`);
+                        // Collect ML training data
+const mlLog = {
+    persona: customer.persona,
+    priceConsciousness: customer.priceConsciousness,
+    loyaltyTendency: customer.loyaltyTendency,
+    mobilePref: customer.mobilePref,
+    strategyTypes: activeStrategies.map(s => s.type),
+    discountPercentage: activeStrategies.find(s => s.type === 'PERCENTAGE_DISCOUNT')?.details?.discountPercentage || 0,
+    pointsProgram: activeStrategies.find(s => s.type === 'CRM_LOYALTY_POINTS') ? 1 : 0,
+    mobileOffer: activeStrategies.find(s => s.type === 'MOBILE_PUSH_OFFER') ? 1 : 0,
+    willBuy: behavior.willBuy ? 1 : 0,
+    finalAmount,
+    paymentStatus
+};
+
+// Append to a CSV for offline ML training
+const fs = require('fs');
+fs.appendFileSync('ml_training_data.csv', Object.values(mlLog).join(',') + '\n');
+
 
                         // Update simulation results
                         simulationResults.totalTransactions++;

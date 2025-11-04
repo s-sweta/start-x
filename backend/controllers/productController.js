@@ -10,17 +10,26 @@ exports.addProduct = async (req, res) => {
             return res.status(400).json({ message: 'You must create a store before adding products' });
         }
 
-        const { name, price, category, cost } = req.body;
+        // Destructure and explicitly convert to numbers
+        const { name, category } = req.body;
+        const price = Number(req.body.price);
+        const cost = Number(req.body.cost);
 
-        if (cost >= price) {
-             return res.status(400).json({ message: 'Cost must be less than the selling price.' });
+        // Validate numeric inputs
+        if (isNaN(price) || isNaN(cost)) {
+            return res.status(400).json({ message: 'Price and cost must be valid numbers.' });
         }
-        
+
+        // Compare properly as numbers
+        if (cost >= price) {
+            return res.status(400).json({ message: 'Cost must be less than the selling price.' });
+        }
+
         const product = await Product.create({
             name,
             price,
             category,
-            cost, // Add cost here
+            cost,
             store: store._id
         });
 
@@ -46,6 +55,8 @@ exports.getMyProducts = async (req, res) => {
     }
 };
 
+// @desc    Delete a product
+// @route   DELETE /api/products/:id
 exports.deleteProduct = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -56,7 +67,7 @@ exports.deleteProduct = async (req, res) => {
 
         // Security Check: Ensure the product belongs to the user's store
         const store = await Store.findOne({ user: req.user.id });
-        if (product.store.toString() !== store._id.toString()) {
+        if (!store || product.store.toString() !== store._id.toString()) {
             return res.status(401).json({ message: 'User not authorized' });
         }
 

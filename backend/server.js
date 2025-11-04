@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const { DBConnection } = require('./db'); // Assuming this path is correct
+const simulationRoutes = require('./routes/simulationRoutes');
+app.use('/api', simulationRoutes);
 
 // Load env vars
 dotenv.config();

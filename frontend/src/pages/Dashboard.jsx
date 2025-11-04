@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import StrategyForm from '../components/StrategyForm';
 import './Dashboard.css';
+import '../components/simulationResult.css';
 
 const Dashboard = () => {
     const [store, setStore] = useState(null);
@@ -506,6 +507,93 @@ const Dashboard = () => {
                         {products.length === 0 && (
                             <div className="simulation-warning">
                                 ⚠️ Add products first to run simulations
+                            </div>
+                        )}
+
+                        {/* Current Simulation Results */}
+                        {transactionAnalytics && (
+                            <div className="transaction-overview">
+                                <div className="overview-grid">
+                                    <div className="overview-card revenue">
+                                        <h4>Total Revenue</h4>
+                                        <p className="big-number">${transactionAnalytics.totalRevenue?.toFixed(2)}</p>
+                                    </div>
+                                    <div className="overview-card transactions">
+                                        <h4>Successful Transactions</h4>
+                                        <p className="big-number">{transactionAnalytics.successfulTransactions}</p>
+                                        <small>{transactionAnalytics.totalTransactions} total</small>
+                                    </div>
+                                    <div className="overview-card avg-order">
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Simulation History Section */}
+                        <div className="simulation-history">
+                            <h4>Previous Simulations</h4>
+                            <div className="simulation-list">
+                                {simulationHistory && simulationHistory.length > 0 ? (
+                                    simulationHistory.map(sim => (
+                                        <div 
+                                            key={sim._id} 
+                                            className={`simulation-card ${selectedSimulation?._id === sim._id ? 'selected' : ''}`}
+                                            onClick={() => setSelectedSimulation(sim)}
+                                        >
+                                            <div className="simulation-card-header">
+                                                <span className="sim-date">{new Date(sim.createdAt).toLocaleString()}</span>
+                                                <span className="sim-metrics">
+                                                    💰 ${sim.metrics.revenue.toLocaleString()}
+                                                </span>
+                                            </div>
+                                            <div className="simulation-card-body">
+                                                <p>{sim.notes}</p>
+                                                <div className="sim-stats">
+                                                    <span>📊 {sim.metrics.transactionCount} transactions</span>
+                                                    <span>💵 ${sim.metrics.orderValue.toFixed(2)} avg order</span>
+                                                    <span>✅ {(sim.metrics.successRate * 100).toFixed(1)}% success</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="no-simulations">
+                                        No previous simulations found. Run your first simulation to see results here!
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Selected Simulation Details */}
+                        {selectedSimulation && (
+                            <div className="simulation-details">
+                                <h4>Simulation Details</h4>
+                                <button 
+                                    className="close-details"
+                                    onClick={() => setSelectedSimulation(null)}
+                                >
+                                    ×
+                                </button>
+                                <div className="details-content">
+                                    <div className="details-section">
+                                        <h5>Input Parameters</h5>
+                                        <ul>
+                                            <li>Duration: {selectedSimulation.inputs.days} days</li>
+                                            <li>Customers: {selectedSimulation.inputs.customerCount}</li>
+                                            <li>Products: {selectedSimulation.inputs.productCount}</li>
+                                            <li>Active Strategies: {selectedSimulation.inputs.activeStrategies}</li>
+                                        </ul>
+                                    </div>
+                                    <div className="details-section">
+                                        <h5>Results</h5>
+                                        <ul>
+                                            <li>Total Revenue: ${selectedSimulation.metrics.revenue.toLocaleString()}</li>
+                                            <li>Transactions: {selectedSimulation.metrics.transactionCount}</li>
+                                            <li>Avg Order Value: ${selectedSimulation.metrics.orderValue.toFixed(2)}</li>
+                                            <li>Success Rate: {(selectedSimulation.metrics.successRate * 100).toFixed(1)}%</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         )}
 
