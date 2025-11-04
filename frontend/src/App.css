@@ -1,0 +1,207 @@
+/* App.css - Main application styles with new color palette */
+/* Color Palette: #9B2226, #AE2012, #BB3E03, #CA6702, #EE9B00, #E9D8A6, #94D2BD, #0A9396, #005F73, #001219 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #001219 0%, #005F73 50%, #0A9396 100%);
+  min-height: 100vh;
+  color: #001219;
+}
+
+.main-content {
+  padding-top: 80px; /* Account for fixed navbar */
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Page containers */
+.page-container {
+  background: linear-gradient(135deg, #E9D8A6 0%, #94D2BD 100%);
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 18, 25, 0.3);
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  backdrop-filter: blur(15px);
+  margin: 0 auto;
+  border: 2px solid rgba(148, 210, 189, 0.3);
+}
+
+.page-container h1 {
+  color: #001219;
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 95, 115, 0.1);
+}
+
+.page-container p {
+  color: #005F73;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+/* Form containers */
+.form-container {
+  background: linear-gradient(135deg, #E9D8A6 0%, #94D2BD 100%);
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 18, 25, 0.3);
+  max-width: 400px;
+  width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(148, 210, 189, 0.3);
+}
+
+.form-container h2 {
+  text-align: center;
+  color: #001219;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 95, 115, 0.1);
+}
+
+/* Form styles */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+input[type="email"],
+input[type="password"] {
+  padding: 1rem;
+  border: 2px solid #94D2BD;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(233, 216, 166, 0.9);
+  color: #001219;
+  font-weight: 500;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+  outline: none;
+  border-color: #0A9396;
+  box-shadow: 0 0 0 3px rgba(10, 147, 150, 0.2);
+  background: #E9D8A6;
+  transform: translateY(-1px);
+}
+
+/* Button styles */
+button {
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #CA6702 0%, #EE9B00 100%);
+  color: #001219;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(202, 103, 2, 0.3);
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(202, 103, 2, 0.4);
+  background: linear-gradient(135deg, #BB3E03 0%, #CA6702 100%);
+}
+
+button:active {
+  transform: translateY(-1px);
+}
+
+/* Specific button styles */
+.logout-btn {
+  background: linear-gradient(135deg, #9B2226 0%, #AE2012 100%);
+  color: #E9D8A6;
+  margin-top: 2rem;
+  box-shadow: 0 4px 15px rgba(155, 34, 38, 0.3);
+}
+
+.logout-btn:hover {
+  background: linear-gradient(135deg, #BB3E03 0%, #9B2226 100%);
+  box-shadow: 0 8px 25px rgba(155, 34, 38, 0.4);
+}
+
+/* Message styles */
+.form-container p {
+  text-align: center;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.form-container p {
+  background: linear-gradient(135deg, #AE2012 0%, #9B2226 100%);
+  color: #E9D8A6;
+  border: 2px solid #BB3E03;
+  box-shadow: 0 4px 15px rgba(155, 34, 38, 0.2);
+}
+
+/* Success message (you can add this class conditionally) */
+.success-message {
+  background: linear-gradient(135deg, #0A9396 0%, #94D2BD 100%) !important;
+  color: #001219 !important;
+  border: 2px solid #005F73 !important;
+  box-shadow: 0 4px 15px rgba(10, 147, 150, 0.2) !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .page-container,
+  .form-container {
+    padding: 2rem 1.5rem;
+    width: 95vw;
+    max-width: none;
+  }
+  
+  .page-container h1 {
+    font-size: 2rem;
+  }
+  
+  input[type="email"],
+  input[type="password"] {
+    padding: 0.875rem;
+  }
+  
+  button {
+    padding: 0.875rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-container,
+  .form-container {
+    padding: 1.5rem 1rem;
+    width: 95vw;
+  }
+  
+  .page-container h1 {
+    font-size: 1.75rem;
+  }
+  
+  .form-container h2 {
+    font-size: 1.5rem;
+  }
+}
